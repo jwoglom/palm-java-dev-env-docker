@@ -58,3 +58,11 @@ Some catalogs will be mounted from root directory in cloned git-repository to
 * Where to find JVM for Palm?
 There are =PRC= files in [[https://palmdb.net/app/jvm][this archive]]. Files' description can be found also in
 this archive.
+
+* MacOS Instructions
+On a M1 Mac, using [[limactl][https://github.com/lima-vm/lima]]:
+- `limactl create --name=docker template://docker --arch=x86_64 --mount-writable --mount-type=reverse-sshfs`
+- `limactl start docker`
+- `docker context create lima-docker --docker "host=unix:///Users/james/.lima/docker/sock/docker.sock"`
+- `docker context use lima-docker`
+- 

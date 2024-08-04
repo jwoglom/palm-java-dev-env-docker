@@ -23,7 +23,11 @@ RUN apt-get install -y dosfstools \
                        libsdl2-dev \
                        vim \
                        x11-xserver-utils \
-                       wget
+                       xorg-dev \
+                       wget \
+                       libgl1-mesa-glx \
+                       libgl1-mesa-dri \
+                       xterm
 
 #
 # Install JDK6 and WTK:
@@ -46,8 +50,12 @@ RUN chmod u+x /usr/$WTK /usr/hack-wtk-installer.sh && \
     /usr/hack-wtk-installer.sh /usr/$WTK && \
     cd /usr && /usr/$WTK && \
     mv /usr/0 /usr/WTK2.5.2 && \
-    echo 'PATH=$PATH:/usr/WTK2.5.2/bin' >> /home/devel/.bashrc && \
-    echo 'MIDP_HOME=/usr/WTK2.5.2' >> /home/devel/.bashrc
+    echo 'export PATH=$PATH:/usr/WTK2.5.2/bin' >> /home/devel/.bashrc && \
+    echo 'export MIDP_HOME=/usr/WTK2.5.2' >> /home/devel/.bashrc && \
+    echo 'export J2MEWTK_HOME=/usr/WTK2.5.2' >> /home/devel/.bashrc && \
+    echo 'export MIDPAPI=$J2MEWTK_HOME/lib/midpapi20.jar' >> /home/devel/.bashrc && \
+    echo 'export J2MECLASSPATH=$J2MEWTK_HOME/wtklib/kenv.zip:$J2MEWTK_HOME/wtklib/kvem.jar:$J2MEWTK_HOME/wtklib/lime.jar:$J2MEWTK_HOME/lib/cldcapi10.jar' >> /home/devel/.bashrc
+
 # Install additional libraries for WTK:
 RUN dpkg --add-architecture i386 && \
     apt-get update && \
@@ -65,7 +73,6 @@ RUN apt install -y libgtk2.0-0:i386 libxtst6:i386 && \
     rm -f ./pulsar.tar.gz && \
     chown -R devel:devel /home/devel/eclipse && \
     echo "alias eclipse='/home/devel/eclipse/eclipse'" >> /home/devel/.bashrc
-
 # Setup root password:
 RUN sed -ri 's/root:\*:(.*)/root::\1/g' /etc/shadow
 
@@ -82,7 +89,9 @@ RUN git clone https://github.com/uARM-Palm/uARM.git 2>&1 && \
             -e 's/^#(DEVICE\t+\+= .+TungstenE2.+)/\1/g' Makefile && \
     make && \
     echo 'PATH+=$PATH:/home/devel/dev_env/uARM' >> ~/.bashrc && \
-    echo "alias emulator='uARM -r ~/os_images/Palm-Tungsten-E2-nor.bin -n ~/os_images/Palm-Tungsten-E2-nand.bin -s ~/sdcard.bin'" >> ~/.bashrc
+    echo "export LIBGL_ALWAYS_INDIRECT=1" >> ~/.bashrc && \
+    echo "export LIBGL_ALWAYS_SOFTWARE=true" >> ~/.bashrc && \
+    echo "alias emulator='uARM -r /home/devel/os_images/Palm-Tungsten-E2-nor.bin -n /home/devel/os_images/Palm-Tungsten-E2-nand.bin -s /home/devel/sdcard.bin'" >> ~/.bashrc
 # Download images for Palm Tungsten E2:
 WORKDIR /home/devel
 RUN mkdir os_images && \

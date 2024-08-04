@@ -17,9 +17,7 @@ services:
             - type: bind
               source: ./j2mewtk/
               target: /home/devel/j2mewtk
-            - type: bind
-              source: ./sdcard.bin
-              target: /home/devel/sdcard.bin
+            - ./sdcard.bin:/home/devel/sdcard.bin:delegated
             - type: bind
               source: ./jar2prc
               target: /home/devel/jar2prc
@@ -28,4 +26,4 @@ services:
               target: /home/devel/workspace
             - /tmp/.X11-unix:/tmp/.X11-unix
         environment:
-            - DISPLAY=${DISPLAY}
+            - DISPLAY=host.docker.internal:0
